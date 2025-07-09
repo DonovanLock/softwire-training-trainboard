@@ -1,8 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import {notFound} from "next/navigation";
-import macro from "styled-jsx/macro";
 
-async function fetchFromAPI(urlSuffix : string) {
+async function fetchFromAPI<T=never>(urlSuffix : string) {
     if (!process.env.BASE_URL) {
         throw new Error('No base URL provided.')
     } else if (!process.env.API_KEY) {
@@ -19,8 +17,8 @@ async function fetchFromAPI(urlSuffix : string) {
     // TODO: check result is correctly formatted (i.e. station exists, etc.)
     console.log(res.status)
     if (res.status === 200) {
-        const data = await res.json();
-        console.log(data);
+        const data : T = await res.json();
+        //console.log(typeof data);
         return data;
     } else if (res.status === 404) {
         notFound();
@@ -30,8 +28,12 @@ async function fetchFromAPI(urlSuffix : string) {
     }
 }
 
+type StationDetailsResponse = {
+    location : {addressLines: string, postCode: string},
+    facilities : {fares: {ticketOffice: {openingTimes: string}}}
+}
 async function getStationDetails(stationCrs: string) {
-    const data = await fetchFromAPI(`stationDetails/${stationCrs}`)
+    const data = await fetchFromAPI<StationDetailsResponse>(`stationDetails/${stationCrs}`)
     // TODO: For each element in data, add to details (and thus webpage) iff that element is actually defined
     const address = data.location.addressLines.replaceAll("<br>", ", ") + ", " + data.location.postCode;
     const ticketOfficeOpeningTimes = data.facilities.fares.ticketOffice.openingTimes.replaceAll("<br>", ", ");
@@ -44,20 +46,9 @@ async function getStationDetails(stationCrs: string) {
     return details;
 }
 
+type StationNamesResponse = {stations: {crs: string, name: string}[]}
 async function getStationName(stationCrs: string) {
-    if (!process.env.BASE_URL) {
-        throw new Error('No base URL provided.')
-    } else if (!process.env.API_KEY) {
-        throw new Error('No API key provided.')
-    }
-
-    const apiUrl = process.env.BASE_URL + "stations";
-    const res = await fetch(apiUrl, {
-        "headers": {
-            "x-api-key": process.env.API_KEY
-        }
-    });
-    const data = await res.json();
+    const data = await fetchFromAPI<StationNamesResponse>("stations");
     const stations = data.stations;
     for (const station of stations) {
         if (station.crs === stationCrs) {
