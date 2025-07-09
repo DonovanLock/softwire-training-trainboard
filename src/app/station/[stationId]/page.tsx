@@ -1,20 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import {notFound} from "next/navigation";
+import macro from "styled-jsx/macro";
 
-async function getStationDetails(stationId: string) {
+async function fetchFromAPI(urlSuffix : string) {
     if (!process.env.BASE_URL) {
         throw new Error('No base URL provided.')
     } else if (!process.env.API_KEY) {
         throw new Error('No API key provided.')
     }
 
-    const apiUrl = process.env.BASE_URL + "stationDetails/" + stationId;
+    const apiUrl = process.env.BASE_URL + urlSuffix;
+
     const res = await fetch(apiUrl, {
         "headers": {
             "x-api-key": process.env.API_KEY
         }
     });
     // TODO: check result is correctly formatted (i.e. station exists, etc.)
-    const data = await res.json();
+    console.log(res.status)
+    if (res.status === 200) {
+        const data = await res.json();
+        console.log(data);
+        return data;
+    } else if (res.status === 404) {
+        notFound();
+    } else {
+        console.log("Unable to fetch from API");
+        notFound();
+    }
+}
+
+async function getStationDetails(stationCrs: string) {
+    const data = await fetchFromAPI(`stationDetails/${stationCrs}`)
     // TODO: For each element in data, add to details (and thus webpage) iff that element is actually defined
     const address = data.location.addressLines.replaceAll("<br>", ", ") + ", " + data.location.postCode;
     const ticketOfficeOpeningTimes = data.facilities.fares.ticketOffice.openingTimes.replaceAll("<br>", ", ");
@@ -27,7 +44,7 @@ async function getStationDetails(stationId: string) {
     return details;
 }
 
-async function getStationName(stationId: string) {
+async function getStationName(stationCrs: string) {
     if (!process.env.BASE_URL) {
         throw new Error('No base URL provided.')
     } else if (!process.env.API_KEY) {
@@ -43,7 +60,7 @@ async function getStationName(stationId: string) {
     const data = await res.json();
     const stations = data.stations;
     for (const station of stations) {
-        if (station.crs === stationId) {
+        if (station.crs === stationCrs) {
             return station.name;
         }
     }
