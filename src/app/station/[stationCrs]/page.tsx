@@ -35,20 +35,21 @@ async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", 
 }
 
 type StationDeparturesResponse = {
-    trainServices: {std: string, status: string, destination: {name: string}[], platform?: string, etd?: string}[]
+    trainServices: {rid: string, std: string, status: string, destination: {name: string}[], platform?: string, etd?: string}[]
 }
 async function getStationDepartures(stationCrs: string) {
     const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", {"crs": stationCrs});
     const trainServices = data.trainServices;
     const departures = [];
-    for (let trainService of trainServices) {
+    for (const trainService of trainServices) {
+        const rid = trainService.rid;
         const std = trainService.std;
         const etd = trainService.hasOwnProperty("etd") ? trainService.etd : undefined;
         const status = trainService.status;
         const destinations = trainService.destination;
         const destinationName = destinations[destinations.length - 1].name;
         const platform = trainService.hasOwnProperty("platform") ? trainService.platform : undefined;
-        departures.push({ "std": std, "etd": etd, "status": status, "destinationName": destinationName, "platform": platform });
+        departures.push({"rid": rid, "std": std, "etd": etd, "status": status, "destinationName": destinationName, "platform": platform });
     }
     return departures;
 }
@@ -89,6 +90,29 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     const details = await getStationDetails(stationCrs);
     const name = await getStationName(stationCrs);
     const departures = await getStationDepartures(stationCrs);
+
+    const departureRows = [
+        <tr key="TitleRow">
+            <th className={"p-1"}>Time</th>
+            <th className={"p-1"}>Destination</th>
+            <th className={"p-1"}>Platform</th>
+            <th className={"p-1"}>Status</th>
+        </tr>
+    ];
+    for (const departure of departures) {
+        const platform = !!departure.platform ? departure.platform : "No platform yet";
+        const scheduledTime = getTimeFromDateTimeString(departure.std);
+
+        //const estimatedTime = getTimeFromDateTimeString(departure.etd);
+        const departureRow =
+            <tr key={departure.rid}>
+                <td className={"p-1"}>{scheduledTime}</td>
+                <td className={"p-1"}>{departure.destinationName}</td>
+                <td className={"p-1"}>{platform}</td>
+                <td className={"p-1"}>{departure.status}</td>
+            </tr>
+        departureRows.push(departureRow);
+    }
     return (
         <>
             <div className={"w-full text-center bg-red-800"}>
@@ -101,6 +125,18 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                     <div>Ticket office opening times: {details.ticketOfficeOpeningTimes}.</div>
                 </div>
             </div>
+            <div className={"p-3"}>
+                <table>
+                    {departureRows}
+                </table>
+            </div>
         </>
-    );
+    )
+}
+
+function getTimeFromDateTimeString(dateTimeString : string) : string {
+    const tIndex = dateTimeString.indexOf("T");
+    const firstColonIndex = dateTimeString.indexOf(":");
+    const secondColonIndex = dateTimeString.indexOf(":", firstColonIndex+1);
+    return dateTimeString.slice(tIndex+1, secondColonIndex);
 }
