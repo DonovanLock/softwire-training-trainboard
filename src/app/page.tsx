@@ -2,7 +2,7 @@
 export default function Home() {
 
     const stationCodes = ["KGX","EDB"];
-
+    // test
     return (
         <>
             <div className={"w-full text-center bg-red-800"}>
