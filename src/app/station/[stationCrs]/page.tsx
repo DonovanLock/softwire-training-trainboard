@@ -112,10 +112,10 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
         else {
             status = departure.status;
         }
-        const scheduledTimeOutput = isOnTime ? scheduledTime : <s>{scheduledTime}</s>
+        const scheduledTimeOutput = isOnTime ? scheduledTime : <s key="strikethrough">{scheduledTime}</s>
         const timeEntry = [scheduledTimeOutput];
         if (!!departure.etd && !isOnTime) {
-            timeEntry.push(<b> {getTimeFromDateTimeString(departure.etd)}</b>);
+            timeEntry.push(<b key="bold"> {getTimeFromDateTimeString(departure.etd)}</b>);
         }
 
         const departureRow =
