@@ -8,7 +8,6 @@ async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", 
     }
 
     const apiUrl = process.env.BASE_URL + urlSuffix;
-    console.log(apiUrl);
 
     const request: RequestInit = {};
     request.headers = headers;
@@ -19,10 +18,10 @@ async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", 
     }
     request.method = method;
 
-    console.log(request)
+    //console.log(request)
 
     const res = await fetch(apiUrl, request);
-    console.log(res.status)
+    //console.log(res.status)
     if (res.status === 200) {
         const data: T = await res.json();
         return data;
@@ -93,7 +92,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
 
     const departureRows = [
         <tr key="TitleRow">
-            <th className={"p-1"}>Time</th>
+            <th className={"p-1"}>Scheduled departure</th>
             <th className={"p-1"}>Destination</th>
             <th className={"p-1"}>Platform</th>
             <th className={"p-1"}>Status</th>
@@ -102,14 +101,29 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     for (const departure of departures) {
         const platform = !!departure.platform ? departure.platform : "No platform yet";
         const scheduledTime = getTimeFromDateTimeString(departure.std);
+        const isOnTime = departure.status === "OnTime"
+        var status: string;
+        if (isOnTime) {
+            status = "On time";
+        }
+        else if (departure.status === "PartiallyCancelled") {
+            status = "Partially cancelled";
+        }
+        else {
+            status = departure.status;
+        }
+        const scheduledTimeOutput = isOnTime ? scheduledTime : <s>{scheduledTime}</s>
+        const timeEntry = [scheduledTimeOutput];
+        if (!!departure.etd && !isOnTime) {
+            timeEntry.push(<b> {getTimeFromDateTimeString(departure.etd)}</b>);
+        }
 
-        //const estimatedTime = getTimeFromDateTimeString(departure.etd);
         const departureRow =
             <tr key={departure.rid}>
-                <td className={"p-1"}>{scheduledTime}</td>
+                <td className={"p-1"}>{timeEntry}</td>
                 <td className={"p-1"}>{departure.destinationName}</td>
                 <td className={"p-1"}>{platform}</td>
-                <td className={"p-1"}>{departure.status}</td>
+                <td className={"p-1"}>{status}</td>
             </tr>
         departureRows.push(departureRow);
     }
@@ -127,7 +141,9 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
             </div>
             <div className={"p-3"}>
                 <table>
-                    {departureRows}
+                    <tbody>
+                        {departureRows}
+                    </tbody>
                 </table>
             </div>
         </>
