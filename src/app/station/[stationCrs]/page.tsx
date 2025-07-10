@@ -1,37 +1,4 @@
-import {notFound} from "next/navigation";
-
-async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", body: Record<string, string> = {}, headers: Record<string, string> = {}) {
-    if (!process.env.BASE_URL) {
-        throw new Error('No base URL provided.')
-    } else if (!process.env.API_KEY) {
-        throw new Error('No API key provided.')
-    }
-
-    const apiUrl = process.env.BASE_URL + urlSuffix;
-
-    const request: RequestInit = {};
-    request.headers = headers;
-    request.headers["x-api-key"] = process.env.API_KEY;
-    if (method === "POST") {
-        request.headers["Content-Type"] = "application/json";
-        request.body = JSON.stringify(body);
-    }
-    request.method = method;
-
-    //console.log(request)
-
-    const res = await fetch(apiUrl, request);
-    //console.log(res.status)
-    if (res.status === 200) {
-        const data: T = await res.json();
-        return data;
-    } else if (res.status === 404) {
-        notFound();
-    } else {
-        console.log("Unable to fetch from API");
-        notFound();
-    }
-}
+import { fetchFromAPI } from "@/app/apiFetch";
 
 type StationDeparturesResponse = {
     trainServices: {rid: string, std: string, status: string, destination: {name: string}[], platform?: string, etd?: string}[]
@@ -101,7 +68,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     for (const departure of departures) {
         const platform = !!departure.platform ? departure.platform : "No platform yet";
         const scheduledTime = getTimeFromDateTimeString(departure.std);
-        const isOnTime = departure.status === "OnTime"
+        const isOnTime = departure.status === "OnTime";
         var status: string;
         if (isOnTime) {
             status = "On time";
