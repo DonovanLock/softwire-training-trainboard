@@ -1,24 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-
-type StationDeparturesResponse = {
-    trainServices: {rid: string, std: string, status: string, destination: {name: string}[], platform?: string, etd?: string}[]
-}
-async function getStationDepartures(stationCrs: string) {
-    const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", {"crs": stationCrs});
-    const trainServices = data.trainServices;
-    const departures = [];
-    for (const trainService of trainServices) {
-        const rid = trainService.rid;
-        const std = trainService.std;
-        const etd = trainService.hasOwnProperty("etd") ? trainService.etd : undefined;
-        const status = trainService.status;
-        const destinations = trainService.destination;
-        const destinationName = destinations[destinations.length - 1].name;
-        const platform = trainService.hasOwnProperty("platform") ? trainService.platform : undefined;
-        departures.push({"rid": rid, "std": std, "etd": etd, "status": status, "destinationName": destinationName, "platform": platform });
-    }
-    return departures;
-}
+import { getDepartureTable } from "./departureTable"
 
 type StationDetailsResponse = {
     location: {addressLines: string, postCode: string},
@@ -55,45 +36,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     const { stationCrs: stationCrs } = await params;
     const details = await getStationDetails(stationCrs);
     const name = await getStationName(stationCrs);
-    const departures = await getStationDepartures(stationCrs);
-
-    const departureRows = [
-        <tr key="TitleRow">
-            <th className={"p-1"}>Scheduled departure</th>
-            <th className={"p-1"}>Destination</th>
-            <th className={"p-1"}>Platform</th>
-            <th className={"p-1"}>Status</th>
-        </tr>
-    ];
-    for (const departure of departures) {
-        const platform = !!departure.platform ? departure.platform : "No platform yet";
-        const scheduledTime = getTimeFromDateTimeString(departure.std);
-        const isOnTime = departure.status === "OnTime";
-        var status: string;
-        if (isOnTime) {
-            status = "On time";
-        }
-        else if (departure.status === "PartiallyCancelled") {
-            status = "Partially cancelled";
-        }
-        else {
-            status = departure.status;
-        }
-        const scheduledTimeOutput = isOnTime ? scheduledTime : <s key="strikethrough">{scheduledTime}</s>
-        const timeEntry = [scheduledTimeOutput];
-        if (!!departure.etd && !isOnTime) {
-            timeEntry.push(<b key="bold"> {getTimeFromDateTimeString(departure.etd)}</b>);
-        }
-
-        const departureRow =
-            <tr key={departure.rid}>
-                <td className={"p-1"}>{timeEntry}</td>
-                <td className={"p-1"}>{departure.destinationName}</td>
-                <td className={"p-1"}>{platform}</td>
-                <td className={"p-1"}>{status}</td>
-            </tr>
-        departureRows.push(departureRow);
-    }
+    const departureTable = await getDepartureTable(stationCrs);
     return (
         <>
             <div className={"w-full text-center bg-red-800"}>
@@ -107,19 +50,10 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                 </div>
             </div>
             <div className={"p-3"}>
-                <table>
-                    <tbody>
-                        {departureRows}
-                    </tbody>
-                </table>
+                {departureTable}
             </div>
         </>
     )
 }
 
-function getTimeFromDateTimeString(dateTimeString : string) : string {
-    const tIndex = dateTimeString.indexOf("T");
-    const firstColonIndex = dateTimeString.indexOf(":");
-    const secondColonIndex = dateTimeString.indexOf(":", firstColonIndex+1);
-    return dateTimeString.slice(tIndex+1, secondColonIndex);
-}
+
