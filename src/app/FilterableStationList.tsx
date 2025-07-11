@@ -18,15 +18,15 @@ export default function FilterableStationList({stations}: { stations: StationNam
                     zIndex: "1",
                 }}
             />
-            <table>
+            <table className={"table-fixed"}>
                 <tbody>
-                    <tr key="TitleRow">
-                        <th className={"px-3 text-left"}>Station name</th>
+                    <tr key="TitleRow" className={"border-b-2 border-b-red-700"}>
+                        <th className={"px-3 text-left w-100"}>Station name</th>
                         <th className={"px-3 text-left"}>Code</th>
                     </tr>
                     {stations.map((station) => (
-                        <tr key={station.id}>
-                            <td className={"px-3 py-1 text-left"}>
+                        <tr key={station.id} className={"border-y border-b-red-700"}>
+                            <td className={"px-3 py-1 text-left overflow-auto"}>
                                 <a href={`/station/${station.crs}`}>
                                     {station.name}
                                 </a>
