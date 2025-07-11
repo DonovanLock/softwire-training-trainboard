@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import {StationNames} from "@/app/helperFunction";
+import {StationNames} from "@/app/stringParsingFunctions";
 
 type StationNamesResponse = {
     stations: { crs: string, name: string, id: string }[];

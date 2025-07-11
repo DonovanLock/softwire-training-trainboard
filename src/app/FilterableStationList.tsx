@@ -1,5 +1,5 @@
 'use client'
-import {StationNames} from "@/app/helperFunction";
+import {StationNames} from "@/app/stringParsingFunctions";
 import React from "react";
 
 export default function FilterableStationList({stations}: { stations: StationNames }) {
