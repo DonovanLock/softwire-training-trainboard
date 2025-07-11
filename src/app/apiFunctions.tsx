@@ -1,0 +1,1 @@
+export type StationNames = { crs: string, name: string, id: string }[];

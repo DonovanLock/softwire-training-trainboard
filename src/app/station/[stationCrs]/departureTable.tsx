@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import { formatCamelCase, getTimeFromDateTimeString } from "@/app/helperFunction";
+import { formatCamelCase, getTimeFromDateTimeString } from "@/app/stringParsingFunctions";
 import { JSX } from "react";
 
 type StationDeparturesResponse = {
