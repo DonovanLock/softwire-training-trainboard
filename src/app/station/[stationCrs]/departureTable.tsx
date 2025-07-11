@@ -41,7 +41,7 @@ async function getStationDepartures(stationCrs: string): Promise<Departure[]> {
 }
 
 
-export async function getDepartureTable(stationCrs: string): Promise<JSX.Element> {
+export async function DepartureTable({stationCrs}: {stationCrs: string}) {
     const departures = await getStationDepartures(stationCrs);
 
     const TableRow: React.FC<{departure: Departure}> = ({departure}) => {
@@ -49,7 +49,7 @@ export async function getDepartureTable(stationCrs: string): Promise<JSX.Element
         const isOnTime = departure.status === "OnTime";
         const isTimeUpdated = departure.etd && !isOnTime;
         return (
-            <tr key={departure.rid}>
+            <tr>
                 <td className={"px-3 py-1 text-left"}>
                     {isOnTime ? scheduledTime : <s key="strikethrough">{scheduledTime}</s>}
                     {isTimeUpdated && <b key="bold"> {getTimeFromDateTimeString(departure.etd!)}</b>}

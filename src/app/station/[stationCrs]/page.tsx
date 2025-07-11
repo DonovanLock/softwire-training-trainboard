@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import { getDepartureTable } from "./departureTable";
+import {DepartureTable} from "./departureTable";
 
 type StationDetailsResponse = {
     location: {addressLines: string, postCode: string},
@@ -14,12 +14,10 @@ type StationDescription = {
 async function getStationDetails(stationCrs: string): Promise<StationDescription> {
     const data = await fetchFromAPI<StationDetailsResponse>(`stationDetails/${stationCrs}`);
     const address = data.location.addressLines.replaceAll("<br>", ", ") + ", " + data.location.postCode;
-    const ticketOfficeDetailsAvailable = data.facilities.fares 
-        && data.facilities.fares.ticketOffice
-        && data.facilities.fares.ticketOffice.openingTimes;
+    const ticketOfficeOpeningTimes : string | undefined = data.facilities.fares?.ticketOffice?.openingTimes;
 
-    const ticketOfficeInfo = ticketOfficeDetailsAvailable 
-        ? "Ticket office opening times: " + data.facilities.fares!.ticketOffice!.openingTimes!.replaceAll("<br>", ", ")
+    const ticketOfficeInfo = ticketOfficeOpeningTimes
+        ? "Ticket office opening times: " + ticketOfficeOpeningTimes.replaceAll("<br>", ", ")
         : "Ticket office information is unavailable";
 
     return {
@@ -47,7 +45,6 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     const { stationCrs: stationCrs } = await params;
     const details = await getStationDetails(stationCrs);
     const name = await getStationName(stationCrs);
-    const departureTable = await getDepartureTable(stationCrs);
     return (
         <>
             <div className={"w-full text-center bg-red-800"}>
@@ -61,7 +58,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                 </div>
             </div>
             <div className={"p-3"}>
-                {departureTable}
+                <DepartureTable stationCrs={stationCrs}/>
             </div>
         </>
     );
