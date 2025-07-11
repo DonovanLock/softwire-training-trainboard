@@ -1,6 +1,8 @@
+export type StationNames = { crs: string, name: string, id: string }[]
+
 export function getTimeFromDateTimeString(dateTimeString: string): string {
-    var indexT = 0;
-    var colons = 0;
+    let indexT = 0;
+    let colons = 0;
     for (let i = 0; i < dateTimeString.length; i++) {
         if (dateTimeString.charAt(i) === "T") {
             indexT = i + 1

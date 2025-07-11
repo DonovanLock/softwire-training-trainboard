@@ -1,15 +1,20 @@
-import { fetchFromAPI } from "@/app/apiFetch";
-import { formatCamelCase, getTimeFromDateTimeString } from "@/app/helperFunction";
+import { getStationNames } from "@/app/stationNamesFromAPI";
+import FilterableStationList from "@/app/FilterableStationList";
 
-type StationNamesResponse = {
-    stations: { crs: string, name: string }[]
-}
-type StationNames = { crs: string, name: string, id: string }[]
+export default async function Home() {
+    const stationNames = await getStationNames();
 
-// get list of stations, filter only to those with both name and crs defined
-// (how to handle names/crs codes being repeated?)
-
-
-export default function Home() {
-    
+    return (
+        <>
+            <div className={"w-full text-center bg-red-800"}>
+                <h1 className={"text-3xl py-3 text-white"}>All stations</h1>
+            </div>
+            <div className = {"p-2"}>
+                Click on a station to see more information and incoming trains.
+                <div className="">
+                    <FilterableStationList stations={stationNames}/>
+                </div>
+            </div>
+        </>
+    );
 }
