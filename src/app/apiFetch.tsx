@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-export async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", body: Record<string, string> = {}, headers: Record<string, string> = {}) {
+export async function fetchFromAPI<T=never>(urlSuffix: string, method: string = "GET", body: Record<string, string> = {}, headers: Record<string, string> = {}): Promise<T> {
     if (!process.env.BASE_URL) {
         throw new Error('No base URL provided.')
     } else if (!process.env.API_KEY) {

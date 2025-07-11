@@ -1,27 +1,32 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import { getDepartureTable } from "./departureTable"
+import { getDepartureTable } from "./departureTable";
 
 type StationDetailsResponse = {
     location: {addressLines: string, postCode: string},
     facilities: {fares: {ticketOffice: {openingTimes: string}}}
 }
-async function getStationDetails(stationCrs: string) {
-    const data = await fetchFromAPI<StationDetailsResponse>(`stationDetails/${stationCrs}`)
+
+type StationDescription = {
+    address: string,
+    ticketOfficeOpeningTimes: string
+};
+
+async function getStationDetails(stationCrs: string): Promise<StationDescription> {
+    const data = await fetchFromAPI<StationDetailsResponse>(`stationDetails/${stationCrs}`);
     const address = data.location.addressLines.replaceAll("<br>", ", ") + ", " + data.location.postCode;
     const ticketOfficeOpeningTimes = data.facilities.fares.ticketOffice.openingTimes.replaceAll("<br>", ", ");
 
-    const details = {
+    return {
         address: address,
         ticketOfficeOpeningTimes: ticketOfficeOpeningTimes,
     };
-
-    return details;
 }
 
 type StationNamesResponse = {
-    stations: {crs: string, name: string}[]
+    stations: {crs: string, name: string}[];
 }
-async function getStationName(stationCrs: string) {
+
+async function getStationName(stationCrs: string): Promise<string> {
     const data = await fetchFromAPI<StationNamesResponse>("stations");
     const stations = data.stations;
     for (const station of stations) {
@@ -53,7 +58,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                 {departureTable}
             </div>
         </>
-    )
+    );
 }
 
 

@@ -1,5 +1,6 @@
 import { fetchFromAPI } from "@/app/apiFetch";
 import { formatCamelCase, getTimeFromDateTimeString } from "@/app/helperFunction";
+import { JSX } from "react";
 
 type StationDeparturesResponse = {
     trainServices: {
@@ -26,25 +27,24 @@ type Departure = {
 async function getStationDepartures(stationCrs: string): Promise<Departure[]> {
     const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", { "crs": stationCrs });
     const trainServices = data.trainServices;
-    const departures = trainServices.map((trainService) => {
-        const departure: Departure = {
+    const departures: Departure[] = trainServices.map((trainService) => {
+        return {
             rid: trainService.rid,
             std: trainService.std,
             etd: trainService.etd,
             status: trainService.status,
             destination: trainService.destination.slice(-1)[0].name,
             platform: trainService.platform
-        }
-        return departure;
+        };
     })
     return departures;
 }
 
 
-export async function getDepartureTable(stationCrs: string) {
+export async function getDepartureTable(stationCrs: string): Promise<JSX.Element> {
     const departures = await getStationDepartures(stationCrs);
 
-    const TableRow : React.FC<{departure: Departure}> = ({departure}) => {
+    const TableRow: React.FC<{departure: Departure}> = ({departure}) => {
         const scheduledTime = getTimeFromDateTimeString(departure.std);
         const isOnTime = departure.status === "OnTime";
         const isTimeUpdated = departure.etd && !isOnTime;
@@ -62,7 +62,6 @@ export async function getDepartureTable(stationCrs: string) {
             </tr>
         );
     }
-
 
     return (
         <table>
