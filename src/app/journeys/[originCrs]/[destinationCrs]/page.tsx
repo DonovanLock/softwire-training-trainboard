@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import { DepartureTable } from "./departureTable";
+import { DepartureTable } from "./journeyTable";
 
 type StationNamesResponse = {
     stations: {crs: string, name: string}[];
