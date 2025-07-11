@@ -1,5 +1,3 @@
-//server
-
 import { fetchFromAPI } from "@/app/apiFetch";
 import {StationNames} from "@/app/helperFunction";
 

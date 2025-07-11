@@ -5,7 +5,7 @@ export function getTimeFromDateTimeString(dateTimeString: string): string {
     let colons = 0;
     for (let i = 0; i < dateTimeString.length; i++) {
         if (dateTimeString.charAt(i) === "T") {
-            indexT = i + 1
+            indexT = i + 1;
         }
         else if (dateTimeString.charAt(i) === ":") {
             colons++;
