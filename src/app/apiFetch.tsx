@@ -8,7 +8,6 @@ export async function fetchFromAPI<T=never>(urlSuffix: string, method: string = 
     }
 
     const apiUrl = process.env.BASE_URL + urlSuffix;
-
     const request: RequestInit = {};
     request.headers = headers;
     request.headers["x-api-key"] = process.env.API_KEY;
@@ -18,10 +17,7 @@ export async function fetchFromAPI<T=never>(urlSuffix: string, method: string = 
     }
     request.method = method;
 
-    //console.log(request)
-
     const res = await fetch(apiUrl, request);
-    //console.log(res.status)
     if (res.status === 200) {
         const data: T = await res.json();
         return data;
