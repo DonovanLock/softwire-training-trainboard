@@ -3,22 +3,28 @@ import { getDepartureTable } from "./departureTable";
 
 type StationDetailsResponse = {
     location: {addressLines: string, postCode: string},
-    facilities: {fares: {ticketOffice: {openingTimes: string}}}
+    facilities: {fares?: {ticketOffice?: {openingTimes?: string}}}
 }
 
 type StationDescription = {
     address: string,
-    ticketOfficeOpeningTimes: string
+    ticketOfficeInfo: string
 };
 
 async function getStationDetails(stationCrs: string): Promise<StationDescription> {
     const data = await fetchFromAPI<StationDetailsResponse>(`stationDetails/${stationCrs}`);
     const address = data.location.addressLines.replaceAll("<br>", ", ") + ", " + data.location.postCode;
-    const ticketOfficeOpeningTimes = data.facilities.fares.ticketOffice.openingTimes.replaceAll("<br>", ", ");
+    const ticketOfficeDetailsAvailable = data.facilities.fares 
+        && data.facilities.fares.ticketOffice
+        && data.facilities.fares.ticketOffice.openingTimes;
+
+    const ticketOfficeInfo = ticketOfficeDetailsAvailable 
+        ? "Ticket office opening times: " + data.facilities.fares!.ticketOffice!.openingTimes!.replaceAll("<br>", ", ")
+        : "Ticket office information is unavailable";
 
     return {
         address: address,
-        ticketOfficeOpeningTimes: ticketOfficeOpeningTimes,
+        ticketOfficeInfo: ticketOfficeInfo,
     };
 }
 
@@ -51,7 +57,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                 Welcome to the details page for {name} ({stationCrs}).
                 <div>
                     <div>Address: {details.address}.</div>
-                    <div>Ticket office opening times: {details.ticketOfficeOpeningTimes}.</div>
+                    <div>{details.ticketOfficeInfo}.</div>
                 </div>
             </div>
             <div className={"p-3"}>
