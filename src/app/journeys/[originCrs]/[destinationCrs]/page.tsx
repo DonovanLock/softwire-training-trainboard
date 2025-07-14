@@ -2,10 +2,8 @@ import { getStationName } from "@/app/apiFunctions";
 import { JourneyTable } from "../../../components/JourneyTable";
 
 export default async function Page({params}: {params: Promise<{ originCrs: string, destinationCrs: string }>}) {
-    const { originCrs: originCrs } = await params;
-    const originName = await getStationName(originCrs);
-    const { destinationCrs: destinationCrs } = await params;
-    const destinationName = await getStationName(destinationCrs);
+    const { originCrs, destinationCrs} = await params;
+    const [originName, destinationName] = await Promise.all([getStationName(originCrs),getStationName(destinationCrs)]);
 
     return (
         <>
