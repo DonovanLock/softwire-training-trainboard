@@ -11,7 +11,7 @@ export default async function Home() {
             </div>
             <div className = {"p-2"}>
                 Click on a station to see more information and incoming trains.
-                <div className="">
+                <div>
                     <FilterableStationList stations={stationNames}/>
                 </div>
             </div>

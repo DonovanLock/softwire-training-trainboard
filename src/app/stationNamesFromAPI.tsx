@@ -1,11 +1,11 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import {StationNames} from "@/app/stringParsingFunctions";
+import {StationNames} from "@/app/apiFunctions";
 
 type StationNamesResponse = {
     stations: { crs: string, name: string, id: string }[];
 }
 
-export async function getStationNames() {
+export async function getStationNames() : Promise<StationNames> {
     const data = await fetchFromAPI<StationNamesResponse>("stations");
     const stations : StationNames = data.stations;
     const sortedFilteredStations : StationNames = [];
