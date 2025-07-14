@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import {DepartureTable} from "./departureTable";
+import {JourneyTable} from "@/app/components/JourneyTable";
 
 type StationDetailsResponse = {
     location: {addressLines: string, postCode: string},
@@ -55,7 +55,7 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
                 </div>
             </div>
             <div className={"p-3"}>
-                <DepartureTable stationCrs={stationCrs}/>
+                <JourneyTable originCrs={stationCrs}/>
             </div>
         </>
     );

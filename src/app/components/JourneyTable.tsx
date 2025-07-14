@@ -1,6 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
 import { formatCamelCase, getTimeFromDateTimeString } from "@/app/stringParsingFunctions";
-import { JSX } from "react";
 
 type StationDeparturesResponse = {
     trainServices: {
@@ -24,8 +23,9 @@ type Departure = {
     platform?: string
 }
 
-async function getStationDepartures(stationCrs: string): Promise<Departure[]> {
-    const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", { "crs": stationCrs });
+async function getJourneys(originCrs: string, destinationCrs: string | undefined = undefined): Promise<Departure[]> {
+    const body : {crs: string, filterCrs?: string} = !!destinationCrs ? {"crs": originCrs, "filterCrs": destinationCrs} : { "crs": originCrs};
+    const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", body);
     const trainServices = data.trainServices;
     const departures: Departure[] = trainServices.map((trainService) => {
         return {
@@ -41,9 +41,9 @@ async function getStationDepartures(stationCrs: string): Promise<Departure[]> {
 }
 
 
-export async function DepartureTable({stationCrs}: {stationCrs: string}) {
-    const departures = await getStationDepartures(stationCrs);
-
+export async function JourneyTable({originCrs, destinationCrs}: {originCrs: string, destinationCrs?: string | undefined}) {
+    const departures = await getJourneys(originCrs, destinationCrs);
+    
     const TableRow: React.FC<{departure: Departure}> = ({departure}) => {
         const scheduledTime = getTimeFromDateTimeString(departure.std);
         const isOnTime = departure.status === "OnTime";

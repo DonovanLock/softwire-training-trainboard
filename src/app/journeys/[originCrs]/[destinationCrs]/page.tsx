@@ -1,5 +1,5 @@
 import { fetchFromAPI } from "@/app/apiFetch";
-import { DepartureTable } from "./journeyTable";
+import { JourneyTable } from "../../../components/JourneyTable";
 
 type StationNamesResponse = {
     stations: {crs: string, name: string}[];
@@ -27,7 +27,7 @@ export default async function Page({params}: {params: Promise<{ originCrs: strin
                 All trains from {originName} ({originCrs}) to {destinationName} ({destinationCrs}).
             </div>
             <div className={"p-3"}>
-                <DepartureTable originCrs={originCrs} destinationCrs={destinationCrs}/>
+                <JourneyTable originCrs={originCrs} destinationCrs={destinationCrs}/>
             </div>
         </>
     );
