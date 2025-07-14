@@ -1,12 +1,14 @@
 'use client'
 import {StationNames} from "@/app/apiFunctions";
 import React from "react";
+import { usePathname } from 'next/navigation'
 
 export default function FilterableStationList({stations}: { stations: StationNames }) {
     const [searchString, setSearchString] = React.useState("");
     stations = stations.filter(station =>
         station.name.toLowerCase().includes(searchString.toLowerCase()) ||
         station.crs.toLowerCase().includes(searchString.toLowerCase()));
+    const pathname = usePathname()
     return (
         <div>
             <input
@@ -28,12 +30,12 @@ export default function FilterableStationList({stations}: { stations: StationNam
                 {stations.map((station) => (
                     <tr key={station.id} className={"border-y border-b-red-700"}>
                         <td className={"px-3 py-1 text-left overflow-auto"}>
-                            <a href={`/station/${station.crs}`}>
+                            <a href={`${pathname}/${station.crs}`}>
                                 {station.name}
                             </a>
                         </td>
                         <td className={"px-3 py-1 text-left"}>
-                            <a href={`/station/${station.crs}`}>
+                            <a href={`${pathname}/${station.crs}`}>
                                 {station.crs}
                             </a>
                         </td>

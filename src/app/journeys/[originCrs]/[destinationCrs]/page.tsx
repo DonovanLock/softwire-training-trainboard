@@ -23,9 +23,6 @@ export default async function Page({params}: {params: Promise<{ originCrs: strin
 
     return (
         <>
-            <div className={"w-full text-center bg-red-800"}>
-                <h1 className={"text-3xl py-3 text-white"}>TrainBoard</h1>
-            </div>
             <div className={"p-3"}>
                 All trains from {originName} ({originCrs}) to {destinationName} ({destinationCrs}).
             </div>
