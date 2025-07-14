@@ -1,24 +1,19 @@
+import { getStationNames } from "@/app/stationNamesFromAPI";
+import FilterableStationList from "@/app/FilterableStationList";
 
-export default function Home() {
-
-    const stationCodes = ["KGX","EDB"];
+export default async function Home() {
+    const stationNames = await getStationNames();
 
     return (
         <>
             <div className={"w-full text-center bg-red-800"}>
-                <h1 className={"text-3xl py-3 text-white"}>TrainBoard</h1>
+                <h1 className={"text-3xl py-3 text-white"}>All stations</h1>
             </div>
-            <div>
-                I&apos;m a simple train board, short and lacking innovation.
-            <div
-                className="">
-                {stationCodes.map((stationName) => (
-                    <div className={"flex flex-row gap-4"} key={stationName}>
-                        <div>Station Code:</div>
-                        <div>{stationName}</div>
-                    </div>
-                ))}
-            </div>
+            <div className = {"p-2"}>
+                Click on a station to see more information and incoming trains.
+                <div>
+                    <FilterableStationList stations={stationNames}/>
+                </div>
             </div>
         </>
     );
