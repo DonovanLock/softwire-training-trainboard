@@ -1,45 +1,5 @@
-import { fetchFromAPI } from "@/app/apiFetch";
 import { formatCamelCase, getTimeFromDateTimeString } from "@/app/stringParsingFunctions";
-
-type StationDeparturesResponse = {
-    trainServices: {
-        rid: string,
-        std: string,
-        status: string,
-        destination: {
-            name: string
-        }[],
-        platform?: string,
-        etd?: string
-    }[]
-}
-
-type Departure = {
-    rid: string,
-    std: string,
-    etd?: string,
-    status: string,
-    destination: string,
-    platform?: string
-}
-
-async function getJourneys(originCrs: string, destinationCrs: string | undefined = undefined): Promise<Departure[]> {
-    const body : {crs: string, filterCrs?: string} = !!destinationCrs ? {"crs": originCrs, "filterCrs": destinationCrs} : { "crs": originCrs};
-    const data = await fetchFromAPI<StationDeparturesResponse>("liveTrainsBoard/departures", "POST", body);
-    const trainServices = data.trainServices;
-    const departures: Departure[] = trainServices.map((trainService) => {
-        return {
-            rid: trainService.rid,
-            std: trainService.std,
-            etd: trainService.etd,
-            status: trainService.status,
-            destination: trainService.destination.slice(-1)[0].name,
-            platform: trainService.platform
-        };
-    })
-    return departures;
-}
-
+import { Departure, getJourneys } from "../apiFunctions";
 
 export async function JourneyTable({originCrs, destinationCrs}: {originCrs: string, destinationCrs?: string | undefined}) {
     const departures = await getJourneys(originCrs, destinationCrs);
@@ -49,7 +9,7 @@ export async function JourneyTable({originCrs, destinationCrs}: {originCrs: stri
         const isOnTime = departure.status === "OnTime";
         const isTimeUpdated = departure.etd && !isOnTime;
         return (
-            <tr>
+            <tr className={"border-y border-b-red-700"}>
                 <td className={"px-3 py-1 text-left"}>
                     {isOnTime ? scheduledTime : <s key="strikethrough">{scheduledTime}</s>}
                     {isTimeUpdated && <b key="bold"> {getTimeFromDateTimeString(departure.etd!)}</b>}
@@ -66,7 +26,7 @@ export async function JourneyTable({originCrs, destinationCrs}: {originCrs: stri
     return (
         <table>
             <tbody>
-                <tr key="TitleRow">
+                <tr key="TitleRow" className={"border-b-2 border-b-red-700"}>
                     <th className={"px-3 text-left"}>Departure</th>
                     <th className={"px-3 text-left"}>Destination</th>
                     <th className={"px-3 text-center"}>Platform</th>

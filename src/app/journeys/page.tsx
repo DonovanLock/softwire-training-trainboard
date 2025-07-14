@@ -1,4 +1,4 @@
-import { getStationNames } from "@/app/stationNamesFromAPI";
+import { getStationNames } from "@/app/apiFunctions";
 import FilterableStationList from "@/app/components/FilterableStationList";
 
 export default async function Home() {

@@ -1,19 +1,5 @@
-import { fetchFromAPI } from "@/app/apiFetch";
+import { getStationName } from "@/app/apiFunctions";
 import { JourneyTable } from "../../../components/JourneyTable";
-
-type StationNamesResponse = {
-    stations: {crs: string, name: string}[];
-}
-async function getStationName(originCrs: string): Promise<string> {
-    const data = await fetchFromAPI<StationNamesResponse>("stations");
-    const stations = data.stations;
-    for (const station of stations) {
-        if (station.crs === originCrs) {
-            return station.name;
-        }
-    }
-    throw new Error("Station does not exist.");
-}
 
 export default async function Page({params}: {params: Promise<{ originCrs: string, destinationCrs: string }>}) {
     const { originCrs: originCrs } = await params;
