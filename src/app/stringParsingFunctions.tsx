@@ -1,6 +1,6 @@
 export function getTimeFromDateTimeString(dateTimeString: string): string {
     const date = new Date(dateTimeString);
-    return date.getHours() + ":" + date.getMinutes();
+    return new Intl.DateTimeFormat("en-UK", { hour: "2-digit", minute: "2-digit"}).format(date);
 }
 
 export function formatCamelCase(camelCaseString: string): string {

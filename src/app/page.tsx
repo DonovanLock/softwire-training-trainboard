@@ -1,20 +1,15 @@
-import { getStationNames } from "@/app/stationNamesFromAPI";
-import FilterableStationList from "@/app/FilterableStationList";
+import Link from "next/link";
+import Image from "next/image";
 
 export default async function Home() {
-    const stationNames = await getStationNames();
-
     return (
-        <>
-            <div className={"w-full text-center bg-red-800"}>
-                <h1 className={"text-3xl py-3 text-white"}>All stations</h1>
-            </div>
-            <div className = {"p-2"}>
-                Click on a station to see more information and incoming trains.
-                <div>
-                    <FilterableStationList stations={stationNames}/>
-                </div>
-            </div>
-        </>
+        <div>
+            <Image
+                src="/images/HomePage.png"
+                width="10000"
+                height="10000"
+                alt="Home page"
+            />
+        </div>
     );
 }
