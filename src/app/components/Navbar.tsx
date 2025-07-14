@@ -14,6 +14,12 @@ export default async function Navbar() {
                     />
                 </Link>
             </div>
+            <div className="w-60 pt-4 text-white">
+                <Link href="/journeys">Plan a journey</Link>
+            </div>
+            <div className="w-30 pt-4 text-white">
+                <Link href="/stations">All stations</Link>
+            </div>
             <div className="flex flex-col items-center justify-center w-full">
                 <h1 className="text-3xl py-3 text-white">TrainBoard</h1>
             </div>
