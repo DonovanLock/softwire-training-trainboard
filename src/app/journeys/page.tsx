@@ -6,7 +6,7 @@ export default async function Home() {
 
     return (
         <>
-            <div className = {"p-2"}>
+            <div className="p-2">
                 Select a departure station:
                 <div>
                     <FilterableStationList stations={stationNames}/>

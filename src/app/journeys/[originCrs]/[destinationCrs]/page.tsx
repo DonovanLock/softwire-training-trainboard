@@ -9,10 +9,10 @@ export default async function Page({params}: {params: Promise<{ originCrs: strin
 
     return (
         <>
-            <div className={"p-3"}>
+            <div className="p-3">
                 All trains from {originName} ({originCrs}) to {destinationName} ({destinationCrs}).
             </div>
-            <div className={"p-3"}>
+            <div className="p-3">
                 <JourneyTable originCrs={originCrs} destinationCrs={destinationCrs}/>
             </div>
         </>

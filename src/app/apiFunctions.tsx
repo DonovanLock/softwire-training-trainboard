@@ -1,16 +1,31 @@
 import { fetchFromAPI } from "@/app/apiFetch";
 
 export type StationNames = {
-    crs: string, name: string, id?: string
+    crs: string,
+    name: string,
+    id?: string
 }[];
 
 export type StationNamesResponse = {
-    stations: { crs: string, name: string, id?: string }[];
+    stations: {
+        crs: string,
+        name: string,
+        id?: string
+    }[];
 }
 
 export type StationDetailsResponse = {
-    location: {addressLines: string, postCode: string},
-    facilities: {fares?: {ticketOffice?: {openingTimes?: string}}}
+    location: {
+        addressLines: string,
+        postCode: string
+    },
+    facilities: {
+        fares?: {
+            ticketOffice?: {
+                openingTimes?: string
+            }
+        }
+    }
 }
 
 export type StationDetails = {
@@ -45,7 +60,7 @@ export async function getStationNames() : Promise<StationNames> {
     const stations : StationNames = data.stations;
     const sortedFilteredStations : StationNames = [];
     for (const station of stations) {
-        if (!!station.crs) {
+        if (station.crs) {
             sortedFilteredStations.push({
                 "crs": station.crs,
                 "name": station.name,

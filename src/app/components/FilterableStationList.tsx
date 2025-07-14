@@ -21,20 +21,20 @@ export default function FilterableStationList({stations}: { stations: StationNam
                     zIndex: "1",
                 }}
             />
-            <table className={"table-fixed"}>
+            <table className="table-fixed">
                 <tbody>
-                <tr key="TitleRow" className={"border-b-2 border-b-red-700"}>
-                    <th className={"px-3 text-left w-100"}>Station name</th>
-                    <th className={"px-3 text-left"}>Code</th>
+                <tr key="TitleRow" className="border-b-2 border-b-red-700">
+                    <th className="px-3 text-left w-100">Station name</th>
+                    <th className="px-3 text-left">Code</th>
                 </tr>
                 {stations.map((station) => (
-                    <tr key={station.id} className={"border-y border-b-red-700"}>
-                        <td className={"px-3 py-1 text-left overflow-auto"}>
+                    <tr key={station.id} className="border-y border-b-red-700">
+                        <td className="px-3 py-1 text-left overflow-auto">
                             <a href={`${pathname}/${station.crs}`}>
                                 {station.name}
                             </a>
                         </td>
-                        <td className={"px-3 py-1 text-left"}>
+                        <td className="px-3 py-1 text-left">
                             <a href={`${pathname}/${station.crs}`}>
                                 {station.crs}
                             </a>

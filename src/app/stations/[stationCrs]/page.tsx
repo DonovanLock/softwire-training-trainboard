@@ -7,14 +7,14 @@ export default async function Page({params}: {params: Promise<{ stationCrs: stri
     const name = await getStationName(stationCrs);
     return (
         <>
-            <div className={"p-3"}>
+            <div className="p-3">
                 Welcome to the details page for {name} ({stationCrs}).
                 <div>
                     <div>Address: {details.address}.</div>
                     <div>{details.ticketOfficeInfo}.</div>
                 </div>
             </div>
-            <div className={"p-3"}>
+            <div className="p-3">
                 <JourneyTable originCrs={stationCrs}/>
             </div>
         </>
